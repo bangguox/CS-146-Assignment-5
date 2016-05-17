@@ -1,0 +1,4 @@
+#define WORD 257
+#define INPUT_REDIRECTION 258
+#define OUTPUT_REDIRECTION 259
+#define PIPE 260
