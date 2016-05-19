@@ -1,62 +1,62 @@
 %{
-//#include <stdio.h>
-//#include <stdlib.h>
-#include "parse.h"
+  #include "parse.h"
 
-commandStruct myCommand;
+  //declaring my global struct. Kind of hacky, but the 
+  //  alternatives suck
+  commandStruct myCommand;
 
-extern int yylineno;
-void yyerror(char *ps, ...){
-  printf("%s\n", ps);
+  extern int yylineno;
+  void yyerror(char *ps, ...){
+    printf("%s\n", ps);
 }
 %}
 
+/*union describe*/
 %union {
        char *string;
 }
 
-
+/*start token describe*/
 %start cmd_line
-%token <string> EXIT PIPE INPUT_REDIR OUTPUT_REDIR STRING NL BACKGROUND
+
+/*all tokens declared in my FLEX*/
+%token <string> EXIT PIPE INPUT_REDIRECTION OUTPUT_REDIRECTION INPUT RUN_BACKGROUND
 
 
 %%
 cmd_line:
         | EXIT 
         {
-          printf("\nSetting the exit var!\n"); 
+          printf("\nThe ECIT command has been detected! (No handling specified by Part 1 instuctions)\n"); 
         }
-        | pipeline back_ground
+        | cmd_func background
         ;
 
-back_ground:  BACKGROUND
+cmd_func: cmd_func PIPE cmd_instance
+        {/*performs a recurse with a pipe*/ }
+        | cmd_instance
+        {/*recurses on a single cmd*/}
+        ;
+
+background:  RUN_BACKGROUND
            {
-              printf("\nSetting the Background var"); 
+            printf("\nThe BACKGROUND command has been detected! (No handling specified by Part 1 instuctions)\n"); 
            }
            |
-           { 
-              printf("\nEND OF CMD");  
-           }
+           {/*END OF LINE (if no background symbol exists)*/}
            ;
 
-simple: command redir
-       ;
 
-command: command STRING
+command: command INPUT
        {
-          //stuff here
-          printf("This is the Arg: %s This is the cmdCt: %d This is the argCt: %d\n", $2, myCommand.commandCount - 1, myCommand.argCount[myCommand.commandCount]);
-          //printf("This is the array: commandArgs[][]\n", $2, myCommand.commandCount - 1, myCommand.argCount[myCommand.commandCount]);
-          
           //sets the arg for the command
           strcpy(myCommand.commandArgs[myCommand.commandCount - 1][myCommand.argCount[myCommand.commandCount - 1]], $2);
 
           //increments the counter
           myCommand.argCount[myCommand.commandCount - 1]++;
        }
-       | STRING
+       | INPUT
        {
-          printf("This is the cmd: %s This is the cmdCt: %d This is the currentcmdSlot: %s\n", $1, myCommand.commandCount, myCommand.command[myCommand.commandCount]);
           //set the command
           strcpy(myCommand.command[myCommand.commandCount],$1);
 
@@ -65,80 +65,65 @@ command: command STRING
        }
        ;
 
-redir: input_redir output_redir
+cmd_instance: command redirection_parse
+      ;
+
+redirection_parse: input_redirection output_redirection
      ;
 
-output_redir:OUTPUT_REDIR STRING
+output_redirection:OUTPUT_REDIRECTION INPUT
             { 
-
-              printf("This is the OUTPUT_REDIR STRING: '%s' This is the cmdCt: %d This is the currentcmdSlot: %s\n", $2, myCommand.commandCount, myCommand.outputSpecifier);
-
               //printf("\nCatching the OUTPUT_REDIR and this is the new file: %s",$2);
               myCommand.outputRedirected = 1;
             
               //storing new direction
               strcpy(myCommand.outputSpecifier, $2);
             }
-            |        /* empty */
-            {
-              
-             // puts("\nno ouput redir detected");
-            }
+            |
+            {/*no  redirection found on the command... therefore ignore*/}
             ;
 
-input_redir:INPUT_REDIR STRING
+input_redirection:INPUT_REDIRECTION INPUT
             {
-           
-              printf("This is the INPUT_REDIR STRING: '%s' This is the cmdCt: %d This is the currentcmdSlot: %s\n", $2, myCommand.commandCount, myCommand.inputSpecifier);
-             
               //flagging that there is redirection 
               myCommand.inputRedirected = 1;
             
               //storing new direction
               strcpy(myCommand.inputSpecifier, $2);
             }
-            |/* empty */
-            {
-              //stuff here
-
-              //puts("\nno input redir detected");
-            }
+            |
+            {/*no  redirection found on the command... therefore ignore*/}
             ;
 
-pipeline: pipeline PIPE simple
-        {
-          printf("pipeline PIP simple: cmd");
-        }
-        | simple
-        {
-          //stuff 
-          puts("\nThis is in simple (recursive?)\n");
-        }
-        ;
 %%
 
-int main()
+int main(int argc, char *argv[])
 {
-  
+  signal();
+  //checking our cmd line params 
+  assert(argc == 1);
+
   FILE *fp = stdin;
 
-    //can take in a BUF_SIZE line from file/stdin
-    const int BUF_SIZE = 1000000;
-    char buf[BUF_SIZE];
+  //can take in a BUF_SIZE line from file/stdin
+  const int BUF_SIZE = 1000000;
+  char buf[BUF_SIZE];
 
-    while(!feof(fp))
-    {
-      printf("? ");
+  while(!feof(fp))
+  {
+    printf("? ");
 
-      //call to parse function
-      Parse(); 
-
-      //prints specified parse info
+    //call to parse function
+    Parse(); 
+    
+    //prints specified parse info. Kind of a jank way to stop from printing
+    //  if an EOF is found
+    if(!feof(fp))
       printParse();
-    }
+  }
 
-    //closing the file
-    fclose(fp);
+  //closing the file
+  fclose(fp);
 
 
   return 0;
@@ -174,8 +159,6 @@ void Parse()
 */
 void printParse()
 {
-  printf("\nTHIS IS THE OUTPUT:\n");
-
   //outputs the number of commands
   printf("%d: ", myCommand.commandCount);
 

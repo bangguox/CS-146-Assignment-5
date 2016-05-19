@@ -1,6 +1,5 @@
 #ifndef PARSE_H
 #define PARSE_H
-
 //includes
 #include <stdio.h>
 #include <errno.h>
