@@ -20,7 +20,7 @@
 %start cmd_line
 
 /*all tokens declared in my FLEX*/
-%token <string> EXIT PIPE INPUT_REDIRECTION OUTPUT_REDIRECTION INPUT RUN_BACKGROUND
+%token <string> EXIT PIPE INPUT_REDIRECTION OUTPUT_REDIRECTION INPUT RUN_BACKGROUND APPEND
 
 
 %%
@@ -68,7 +68,7 @@ command: command INPUT
 cmd_instance: command redirection_parse
       ;
 
-redirection_parse: input_redirection output_redirection
+redirection_parse: input_redirection output_redirection append
      ;
 
 output_redirection:OUTPUT_REDIRECTION INPUT
@@ -95,6 +95,18 @@ input_redirection:INPUT_REDIRECTION INPUT
             {/*no  redirection found on the command... therefore ignore*/}
             ;
 
+
+append:APPEND INPUT
+            { 
+              //printf("\nCatching the OUTPUT_REDIR and this is the new file: %s",$2);
+              myCommand.append = 1;
+            
+              //storing new direction
+              strcpy(myCommand.outputSpecifier, $2);
+            }
+            |
+            {/*no  redirection found on the command... therefore ignore*/}
+            ;
 %%
 
 int main(int argc, char *argv[])
@@ -140,7 +152,9 @@ void Parse()
 
   //ensuring all counter have been reset
   myCommand.commandCount = 0;
-  
+ 
+  myCommand.append = 0;
+ 
   //could probably save some timere here and only go through
   //  the previous count, but 16 is fairly small
   int i;
@@ -196,8 +210,14 @@ void printParse()
     //prints the symbol and the redirected file name
     printf(" >'%s'", myCommand.outputSpecifier);
   }
-
-  //newline for formatting
+  
+  if(myCommand.append)
+  {
+    //prints the symbol and the redirected file name
+    printf(" >>'%s'", myCommand.outputSpecifier);
+  }
+ 
+   //newline for formatting
   printf("\n");
 }
 

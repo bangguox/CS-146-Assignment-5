@@ -11,8 +11,9 @@
 %%
  
 [0-9a-zA-Z_=/\-\*\.]+ {  yylval.string = strdup(yytext); return INPUT; }
-[>]                   { return OUTPUT_REDIRECTION; }
 [<]                   { return INPUT_REDIRECTION; }
+[>]                   { return OUTPUT_REDIRECTION;} 
+[>]{2}                { return APPEND;} 
 [|]                   { return PIPE;}
 [&]                   { return RUN_BACKGROUND; }
 exit                  { return EXIT;}

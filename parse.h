@@ -25,6 +25,9 @@ typedef struct commandStruct{
   //flag to signal output redirection
   int outputRedirected;
  
+  //flag to signal output redirection
+  int append;
+
   //stores to input redirect 
   char inputSpecifier[10000];
 
