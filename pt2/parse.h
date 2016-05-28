@@ -9,6 +9,8 @@
 //prototypes 
 void Parse();
 void printParse();
+void prepCommand();
+void executeCommand();
 
 //struct for storing cmd line info
 typedef struct commandStruct{
@@ -36,7 +38,8 @@ typedef struct commandStruct{
 
   //storing the command  
   //char command[MAX_COMMANDS][MAX_FILE_NAME_SIZE];
-  char command[16][10000];
+  char command[16][10000
+];
   
   //storing the command args  
   //char command[MAX_COMMANDS][MAX_ARGS][MAX_FILE_NAME_SIZE];

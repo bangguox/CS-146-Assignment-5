@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
   //can take in a BUF_SIZE line from file/stdin
   const int BUF_SIZE = 1000000;
   char buf[BUF_SIZE];
-
+/*
   while(!feof(fp))
   {
     printf("? ");
@@ -133,8 +133,14 @@ int main(int argc, char *argv[])
     if(!feof(fp))
       printParse();
   }
+*/
 
+  char *args[] = {"ls", "-la", NULL};
+
+ // executeCommand(0, 1, args, 0);
   //closing the file
+  prepCommand();  
+
   fclose(fp);
 
 

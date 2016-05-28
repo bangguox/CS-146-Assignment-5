@@ -1,5 +1,5 @@
 all: parse.tab.c lex.yy.c 
-	gcc -w parse.tab.c lex.yy.c -o parser
+	gcc -w parse.tab.c lex.yy.c parse.c -o parser
 
 lex.yy.c: parse.l
 	flex parse.l; 
