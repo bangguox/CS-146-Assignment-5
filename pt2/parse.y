@@ -112,6 +112,7 @@ append:APPEND INPUT
 int main(int argc, char *argv[])
 {
   signal();
+
   //checking our cmd line params 
   assert(argc == 1);
 
@@ -120,26 +121,29 @@ int main(int argc, char *argv[])
   //can take in a BUF_SIZE line from file/stdin
   const int BUF_SIZE = 1000000;
   char buf[BUF_SIZE];
-/*
+
   while(!feof(fp))
   {
     printf("? ");
 
     //call to parse function
     Parse(); 
-    
+   
+    //prepares and executes command 
+    prepAndExecuteCommand(); 
+
+
+/* 
     //prints specified parse info. Kind of a jank way to stop from printing
     //  if an EOF is found
     if(!feof(fp))
       printParse();
-  }
+
 */
+  }
 
-  char *args[] = {"ls", "-la", NULL};
 
- // executeCommand(0, 1, args, 0);
-  //closing the file
-  prepCommand();  
+
 
   fclose(fp);
 

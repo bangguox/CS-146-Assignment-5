@@ -2,59 +2,53 @@
 
 commandStruct myCommand;
 
-void prepCommand()
+void prepAndExecuteCommand()
 {
 
-
+/*
   const char *ls[] = { "ls", "-l", 0 };
   const char *grep[] = { "grep", "parse", 0 };
   const char *awk[] = { "awk", "{print $1}", 0 };
   const char *sort[] = { "sort", 0 };
   const char *uniq[] = { "uniq", 0 };
 
-  char *args[] = { {ls}, {awk}, {sort}, {uniq} };
-  //char *args[] = { {ls}, {grep} };
-  
+  //char *args[] = { {ls}, {awk}, {sort}, {uniq} };
+  char *args[] = { {ls}, {grep} };
+  */
+  int **args;
   int fd[2];
 
   //initial fd will be from whatever std in is for now...
-  int inputFd = 0;
-  int stdOUT;
-  dup2(0, inputFd);
+  int inputFd = fileno(stdin);
 
   //pipe loop runs n-1 times... Last (or potentially only) execution will
   //occur affer the loop has iterated over n-1 commands and the nth will
   //be fulfilled after 
   int i;
-  for(i = 0; i < 1; i++)
+  for(i = 0; i < myCommand.commandCount - 1; i++)
   {
     //creating the pipe
     pipe(fd);
 
     //temporary data prep
-//    char *args[] = {"ls", "-la", NULL};  
-   
-     //runs the progrma
-     executeCommand(inputFd, fd[1], args[i], 0);
+    args = prepareCommand(myCommand.command[i], myCommand.commandArgs[i], myCommand.argCount[i]);  
+     
+    //runs the progrma
+    executeCommand(inputFd, fd[1], args, 0);
   
     //closing the writing end of the pipe since all the info is already in there
     close(fd[1]);
 
     //redirect the read end of the pipe to our inputFd in preparation
     //of the next command to read from
-    
-   // inputFd = fd[0];
-   
     dup2(fd[0], inputFd);
     close(fd[0]);
   }
 
-  if(inputFd != 0)
-    dup2(inputFd, 0);  
-
-
+    args = prepareCommand(myCommand.command[i], myCommand.commandArgs[i], myCommand.argCount[i]);  
+     
   //runs the last (or potentially first and only) program
-  executeCommand(stdin, stdout, args[1], 0);
+  executeCommand(inputFd, 1, args, 0);
 }
 
 //helper funciton responsible for executing non-builting commands
@@ -104,4 +98,30 @@ void executeCommand(int inputFd, int outputFd, char *args[], int run_bg)
       pid = wait(&status);
 
   }
+}
+
+char ** prepareCommand(char * cmd, char ** arg, int numOfArgs)
+{
+  const int NAME_SIZE = 10000;
+  
+   char ** returnAr = (char *) malloc(numOfArgs + 2);
+
+
+  returnAr[0] = (char *) malloc(NAME_SIZE); 
+  strncpy(returnAr[0], cmd, NAME_SIZE);
+  
+  
+  int i;
+  for(i = 0; i < numOfArgs; i++)
+  {
+
+    returnAr[i + 1] = (char *) malloc(NAME_SIZE); 
+    strncpy(returnAr[i + 1], arg[i], NAME_SIZE);
+
+  }
+
+  //setting the null terminator of the arg array
+  returnAr[numOfArgs + 1] = 0; 
+
+  return returnAr;
 }
