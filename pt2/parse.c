@@ -19,7 +19,8 @@ void prepAndExecuteCommand()
   int fd[2];
 
   //initial fd will be from whatever std in is for now...
-  int inputFd = fileno(stdin);
+  int inputFd = 0;
+
 
   //pipe loop runs n-1 times... Last (or potentially only) execution will
   //occur affer the loop has iterated over n-1 commands and the nth will
@@ -31,7 +32,7 @@ void prepAndExecuteCommand()
     pipe(fd);
 
     //temporary data prep
-    args = prepareCommand(myCommand.command[i], myCommand.commandArgs[i], myCommand.argCount[i]);  
+    args = prepareCommand(i);  
      
     //runs the progrma
     executeCommand(inputFd, fd[1], args, 0);
@@ -45,8 +46,10 @@ void prepAndExecuteCommand()
     close(fd[0]);
   }
 
-    args = prepareCommand(myCommand.command[i], myCommand.commandArgs[i], myCommand.argCount[i]);  
-     
+  if(inputFd != 0)
+    dup2(inputFd, 0);
+    args = prepareCommand(i);  
+  
   //runs the last (or potentially first and only) program
   executeCommand(inputFd, 1, args, 0);
 }
@@ -100,28 +103,27 @@ void executeCommand(int inputFd, int outputFd, char *args[], int run_bg)
   }
 }
 
-char ** prepareCommand(char * cmd, char ** arg, int numOfArgs)
+char ** prepareCommand(int cmd)
 {
   const int NAME_SIZE = 10000;
   
-   char ** returnAr = (char *) malloc(numOfArgs + 2);
+  char ** returnAr = (char *) malloc(myCommand.argCount[cmd] + 2);
 
-
+  //sets the first command
   returnAr[0] = (char *) malloc(NAME_SIZE); 
-  strncpy(returnAr[0], cmd, NAME_SIZE);
+  strncpy(returnAr[0], myCommand.command[cmd], NAME_SIZE);
   
   
   int i;
-  for(i = 0; i < numOfArgs; i++)
+  for(i = 0; i < myCommand.argCount[cmd]; i++)
   {
-
     returnAr[i + 1] = (char *) malloc(NAME_SIZE); 
-    strncpy(returnAr[i + 1], arg[i], NAME_SIZE);
+    strncpy(returnAr[i + 1], myCommand.commandArgs[cmd][i], NAME_SIZE);
 
   }
 
   //setting the null terminator of the arg array
-  returnAr[numOfArgs + 1] = 0; 
+  returnAr[myCommand.argCount[cmd] + 1] = 0; 
 
   return returnAr;
 }

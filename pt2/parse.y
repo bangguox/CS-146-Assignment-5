@@ -124,29 +124,24 @@ int main(int argc, char *argv[])
 
   while(!feof(fp))
   {
+    //cmd prompt
     printf("? ");
 
     //call to parse function
     Parse(); 
    
     //prepares and executes command 
-    prepAndExecuteCommand(); 
-
-
-/* 
-    //prints specified parse info. Kind of a jank way to stop from printing
-    //  if an EOF is found
     if(!feof(fp))
-      printParse();
-
-*/
+    {
+       prepAndExecuteCommand();
+    }
+    else
+    {
+      printf("There is an EOF\n");
+    }
   }
 
-
-
-
   fclose(fp);
-
 
   return 0;
 }
@@ -178,58 +173,6 @@ void Parse()
 }
 
 
-/*
-*prints the command stuct in accordance with assignment instructions
-*/
-void printParse()
-{
-  //outputs the number of commands
-  printf("%d: ", myCommand.commandCount);
-
-  //handles any input redirection
-  if(myCommand.inputRedirected)
-  {
-    //prints the symbol and the redirected file name
-    printf("< '%s' ", myCommand.inputSpecifier);
-  }
-
-
-  //handles all of the commands and their arguments
-  int i;
-  for(i = 0; i < myCommand.commandCount; i++)
-  {
-      printf("'%s'", myCommand.command[i]);
-
-    //printing all of the args to the command
-    int j;
-    for(j = 0; j < myCommand.argCount[i]; j++)
-    {
-      printf(" '%s'", myCommand.commandArgs[i][j]);
-    }
-
-    //printing the pipe if there is a following command
-    if(i != myCommand.commandCount - 1)
-      printf(" | ");
-    else
-    printf(" ");
-  }
-
-  //handles any output redirection
-  if(myCommand.outputRedirected)
-  {
-    //prints the symbol and the redirected file name
-    printf(" >'%s'", myCommand.outputSpecifier);
-  }
-  
-  if(myCommand.append)
-  {
-    //prints the symbol and the redirected file name
-    printf(" >>'%s'", myCommand.outputSpecifier);
-  }
- 
-   //newline for formatting
-  printf("\n");
-}
 
 
 
