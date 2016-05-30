@@ -152,8 +152,14 @@ int main(int argc, char *argv[])
     Parse();
 
     //checking to see if the command is a cd request
-    if(!myCommand.eof) 
-      if(!strcmp(myCommand.cmds[0][0], "cd"))
+    if(!myCommand.eof && myCommand.commandCount > 0) 
+      //cheking for comment
+      if(myCommand.cmds[0][0][0] == '#')
+      {
+        //does nothing because we ignore comments
+      } 
+      //checking for cd built-in command
+      else if(!strcmp(myCommand.cmds[0][0], "cd"))
         cd();
       else
         prepAndExecuteCommand();

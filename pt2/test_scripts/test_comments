@@ -4,4 +4,5 @@ echo telling the interpreter what shell to run
 #printing the PWD
 pwd
 #printing the files in the current directory
+# and testing multiple comments in a row
 ls
