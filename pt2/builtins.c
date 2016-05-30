@@ -4,18 +4,28 @@ commandStruct myCommand;
 
 void cd()
 {
-    char path[1000];
-    
+  char path[1000];
+  char cwd[1000];
+
+  //it is assumed that if there is no arguments with the command, then we change to home directory
+  if( myCommand.paramCount[0] <  2) 
+  {
+      chdir(getenv("HOME"));
+  }    
+  else 
+  {
     strcpy(path, myCommand.cmds[0][1]);
 
-    char cwd[1000];
     if(path[0] != '/')
-    {// true for the dir in cwd
-        getcwd(cwd,sizeof(cwd));
-        strcat(cwd,"/");
-        strcat(cwd,path);
-        chdir(cwd);
-    }else{//true for dir w.r.t. /
-        chdir(path);
+    {
+      getcwd(cwd,sizeof(cwd));
+      strcat(cwd,"/");
+      strcat(cwd,path);
+      chdir(cwd);
+    } 
+    else
+    {
+      chdir(path);
     }
+  }
 }

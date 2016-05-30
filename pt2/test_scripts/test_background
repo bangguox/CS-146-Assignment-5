@@ -1,7 +1,4 @@
 echo testing the functionality of running programs in the background -- system scheduling can affect this script
-echo running the sleep command (for 8 second) in the foreground before executing our output
-sleep 8s
-echo Completed First Sleep!
-echo running the sleep command (for 8 second) in the background before executing ls
-sleep 8s &
-echo Completed Second Sleep!
+ps | grep sleep
+sleep 30 &
+ps | grep sleep
