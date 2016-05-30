@@ -75,7 +75,7 @@ printf("This is the value: %d\n", myCommand.outputRedirected);
   }
 */
   //runs the last (or potentially first and only) program
-  executeCommand(stdin, stdout, myCommand.cmds[0], 0);
+  executeCommand(fileno(stdin), fileno(stdout), myCommand.cmds[0], 0);
 }
 
 //helper funciton responsible for executing non-builting commands
