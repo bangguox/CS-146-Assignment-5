@@ -1,0 +1,9 @@
+echo testing arbitrary commands with argument (and options) passed - V2 (final ls will throw error to show file deleted)
+echo creating the file test_file
+touch test_file
+echo displaying the newly created file
+ls -l test_file
+echo removing the file
+rm -f test_file
+echo showing the file no longer exists
+ls -l test_file

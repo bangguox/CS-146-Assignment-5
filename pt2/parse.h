@@ -11,7 +11,7 @@ void Parse();
 void printParse();
 void prepAndExecuteCommand();
 void executeCommand();
-char ** prepareCommand(int cmd);
+void cd();
 
 //struct for storing cmd line info
 typedef struct commandStruct{

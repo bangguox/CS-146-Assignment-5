@@ -150,8 +150,13 @@ int main(int argc, char *argv[])
 
     //call to parse function
     Parse();
+
+    //checking to see if the command is a cd request
     if(!myCommand.eof) 
-      prepAndExecuteCommand();
+      if(!strcmp(myCommand.cmds[0][0], "cd"))
+        cd();
+      else
+        prepAndExecuteCommand();
 
     if(argc < 2 && !myCommand.eof)
       printf("? ");
@@ -238,7 +243,26 @@ void printParse()
   printf("\n");
 }
 
+void cd(){
 
+  char* pth = "/";
+
+    char path[1000];
+    strcpy(path,pth);
+
+    char cwd[1000];
+    if(pth[0] != '/')
+    {// true for the dir in cwd
+        getcwd(cwd,sizeof(cwd));
+        strcat(cwd,"/");
+        strcat(cwd,path);
+        chdir(cwd);
+    }else{//true for dir w.r.t. /
+        chdir(pth);
+    }
+
+    return 0;
+}
 
 
 
