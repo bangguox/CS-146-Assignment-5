@@ -5,13 +5,13 @@ commandStruct myCommand;
 void prepAndExecuteCommand()
 {
 
-/*
-  const char *ls[] = { "ls", "-l", 0 };
-  const char *grep[] = { "grep", "parse", 0 };
-  const char *awk[] = { "awk", "{print $1}", 0 };
-  const char *sort[] = { "sort", 0 };
-  const char *uniq[] = { "uniq", 0 };
-*/
+  /*
+     const char *ls[] = { "ls", "-l", 0 };
+     const char *grep[] = { "grep", "parse", 0 };
+     const char *awk[] = { "awk", "{print $1}", 0 };
+     const char *sort[] = { "sort", 0 };
+     const char *uniq[] = { "uniq", 0 };
+     */
   int fd[2];
 
   //initial fd will be from whatever std in is for now...
@@ -26,25 +26,28 @@ void prepAndExecuteCommand()
   {
     //creating the pipe
     pipe(fd);
-     
+
+    //appends a null to the end of the cmd array before execution
+    myCommand.cmds[i][myCommand.paramCount[i]] = NULL;
+
     //runs the progrma
     executeCommand(inputFd, fd[1], myCommand.cmds[i], 0);
-  
+
     //closing the writing end of the pipe since all the info is already in there
     close(fd[1]);
 
     //redirect the read end of the pipe to our inputFd in preparation
     //of the next command to read from
-   // dup2(fd[0], inputFd);
-   // close(fd[0]);
-   inputFd = fd[0];
+    // dup2(fd[0], inputFd);
+    // close(fd[0]);
+    inputFd = fd[0];
   }
 
   if(inputFd != 0)
     dup2(inputFd, 0);
 
-
-//printf("This is the cmd: %s - %s - %s - %s\n", args[0], args[1], args[2], args[3]);
+  //appends a null to the end of the cmd array before execution
+  myCommand.cmds[i][myCommand.paramCount[i]] = NULL;
 
   //runs the last (or potentially first and only) program
   executeCommand(inputFd, 1, myCommand.cmds[i], 0);
@@ -55,8 +58,8 @@ void prepAndExecuteCommand()
 //helper funciton responsible for executing non-builting commands
 void executeCommand(int inputFd, int outputFd, char *args[], int run_bg)
 {
-   pid_t pid = fork();
-   int status;
+  pid_t pid = fork();
+  int status;
 
   if(pid == -1)
   {
@@ -70,7 +73,7 @@ void executeCommand(int inputFd, int outputFd, char *args[], int run_bg)
     {
       //copying over the redirected input fd
       dup2(inputFd, 0); 
-      
+
       //need do close fd so we dont run out
       close(inputFd);
     } 
@@ -84,15 +87,15 @@ void executeCommand(int inputFd, int outputFd, char *args[], int run_bg)
       //closing the old fd
       close(outputFd);
     }
-    
+
     //run command
     execvp(args[0], args);
 
-    
+
     printf("Issue exec'ing program: %s\n", args[0]);
     exit(-1);
   }
- else
+  else
   {
     //waiting for child to terminte unless background flag is specified
     if(run_bg != 1)
