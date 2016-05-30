@@ -29,12 +29,12 @@
 cmd_line:
         | EXIT 
         {
-          printf("\nThe EXIT command has been detected! (No handling specified by Part 1 instuctions)\n"); 
+          //printf("\nThe EXIT command has been detected! (No handling specified by Part 1 instuctions)\n"); 
           myCommand.eof = 1;
         }
         | END_OF_FILE
         {
-          printf("End of file token has been detected!\n");
+          //printf("End of file token has been detected!\n");
 
           //sets the eof bit to true
           myCommand.eof = 1;

@@ -4,10 +4,12 @@
   //declaring my global struct. Kind of hacky, but the 
   //  alternatives suck
   commandStruct myCommand;
+  
+  extern FILE * yyin;
 
   extern int yylineno;
   void yyerror(char *ps, ...){
-    printf("%s\n", ps);
+    printf("In yylineno: %s\n", ps);
 }
 %}
 
@@ -20,14 +22,25 @@
 %start cmd_line
 
 /*all tokens declared in my FLEX*/
-%token <string> EXIT PIPE INPUT_REDIRECTION OUTPUT_REDIRECTION INPUT RUN_BACKGROUND APPEND
+%token <string> EXIT END_OF_FILE PIPE INPUT_REDIRECTION OUTPUT_REDIRECTION INPUT RUN_BACKGROUND APPEND
 
 
 %%
 cmd_line:
         | EXIT 
         {
-          printf("\nThe ECIT command has been detected! (No handling specified by Part 1 instuctions)\n"); 
+          //printf("\nThe EXIT command has been detected! (No handling specified by Part 1 instuctions)\n"); 
+          myCommand.eof = 1;
+        }
+        | END_OF_FILE
+        {
+          //printf("End of file token has been detected!\n");
+
+          //sets the eof bit to true
+          myCommand.eof = 1;
+
+          //return 0 to stop the bison from looking for more tokens  
+          return 0;
         }
         | cmd_func background
         ;
@@ -111,32 +124,36 @@ append:APPEND INPUT
 
 int main(int argc, char *argv[])
 {
-  signal();
+
   //checking our cmd line params 
-  assert(argc == 1);
+  assert(argc <= 2);
 
-  FILE *fp = stdin;
-
-  //can take in a BUF_SIZE line from file/stdin
-  const int BUF_SIZE = 1000000;
-  char buf[BUF_SIZE];
-
-  while(!feof(fp))
+  //handles input scripts, otherwise points the fp to stdin
+  if(argc == 2)
   {
-    printf("? ");
+    yyin = fopen(argv[1],"r");
+  }
+  else
+  {
+    yyin = stdin;
 
-    //call to parse function
-    Parse(); 
-    
-    //prints specified parse info. Kind of a jank way to stop from printing
-    //  if an EOF is found
-    if(!feof(fp))
-      printParse();
+    //cmd prompt
+    printf("? ");
   }
 
-  //closing the file
-  fclose(fp);
+  while(!myCommand.eof)
+  {
 
+    //call to parse function
+    Parse();
+    if(!myCommand.eof) 
+      printParse();
+
+    if(argc < 2 && !myCommand.eof)
+      printf("? ");
+
+  }
+  
 
   return 0;
 }
@@ -166,7 +183,6 @@ void Parse()
   //call out lex + bison
    yyparse();
 }
-
 
 /*
 *prints the command stuct in accordance with assignment instructions
@@ -220,6 +236,7 @@ void printParse()
    //newline for formatting
   printf("\n");
 }
+
 
 
 

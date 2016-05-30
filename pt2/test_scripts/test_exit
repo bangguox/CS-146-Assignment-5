@@ -1,4 +1,4 @@
 ls
-ls parse.h
 ls -l parse.h
+exit
 cat parse.h
