@@ -94,7 +94,8 @@ output_redirection:OUTPUT_REDIRECTION INPUT
               myCommand.outputRedirected = 1;
             
               //storing new direction
-              strcpy(myCommand.outputSpecifier, $2);
+              myCommand.outputFileName = $2;
+
             }
             |
             {/*no  redirection found on the command... therefore ignore*/}
@@ -106,7 +107,7 @@ input_redirection:INPUT_REDIRECTION INPUT
               myCommand.inputRedirected = 1;
             
               //storing new direction
-              strcpy(myCommand.inputSpecifier, $2);
+              myCommand.inputFileName = $2;
             }
             |
             {/*no  redirection found on the command... therefore ignore*/}
@@ -119,7 +120,7 @@ append:APPEND INPUT
               myCommand.append = 1;
             
               //storing new direction
-              strcpy(myCommand.outputSpecifier, $2);
+              myCommand.outputFileName = $2;
             }
             |
             {/*no  redirection found on the command... therefore ignore*/}
@@ -211,7 +212,7 @@ void printParse()
   if(myCommand.inputRedirected)
   {
     //prints the symbol and the redirected file name
-    printf("< '%s' ", myCommand.inputSpecifier);
+    printf("< '%s' ", myCommand.inputFileName);
   }
 
   //handles all of the commands and their arguments
@@ -236,13 +237,13 @@ void printParse()
   if(myCommand.outputRedirected)
   {
     //prints the symbol and the redirected file name
-    printf(" >'%s'", myCommand.outputSpecifier);
+    printf(" >'%s'", myCommand.outputFileName);
   }
   
   if(myCommand.append)
   {
     //prints the symbol and the redirected file name
-    printf(" >>'%s'", myCommand.outputSpecifier);
+    printf(" >>'%s'", myCommand.outputFileName);
   }
  
    //newline for formatting

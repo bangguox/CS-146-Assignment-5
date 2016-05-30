@@ -32,10 +32,10 @@ typedef struct commandStruct{
   int append;
 
   //stores to input redirect 
-  char inputSpecifier[10000];
+  char* inputFileName;
 
   //stores the output redirect file
-  char outputSpecifier[100000];
+  char* outputFileName;
 
   //stores the number of paramets for a single command
   int paramCount[16];

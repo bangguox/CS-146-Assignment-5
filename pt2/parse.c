@@ -49,9 +49,17 @@ void prepAndExecuteCommand()
   //appends a null to the end of the cmd array before execution
   myCommand.cmds[i][myCommand.paramCount[i]] = NULL;
 
+/*
+  if (file_fd != 1) 
+  { 
+    dup2(file_fd, 1); 
+    close(file_fd); 
+  }
+*/
   //runs the last (or potentially first and only) program
-  executeCommand(inputFd, 1, myCommand.cmds[i], 0);
-  //execvp(myCommand.command[0], myCommand.commandArgs[0]);
+  //executeCommand(inputFd, 1, myCommand.cmds[i], 0);
+
+  execvp(myCommand.cmds[0][0], myCommand.cmds[0]);
 
 }
 
