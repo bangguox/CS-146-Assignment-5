@@ -15,8 +15,12 @@ void prepAndExecuteCommand()
   int fd[2];
 
   //initial fd will be from whatever std in is for now...
-  int inputFd = 0;
-
+  int saveInput = dup(fileno(stdin));
+  int saveOutput = dup(fileno(stdout));
+  int inputFd;
+/*
+  //standard input points to the inputFD
+  //dup2(inputFd, fileno(stdin));
 
   //pipe loop runs n-1 times... Last (or potentially only) execution will
   //occur affer the loop has iterated over n-1 commands and the nth will
@@ -43,8 +47,8 @@ void prepAndExecuteCommand()
     inputFd = fd[0];
   }
 
-  if(inputFd != 0)
-    dup2(inputFd, 0);
+//  if(inputFd != 0)
+//    dup2(inputFd, 0);
 
   //appends a null to the end of the cmd array before execution
   myCommand.cmds[i][myCommand.paramCount[i]] = NULL;
@@ -69,12 +73,9 @@ printf("This is the value: %d\n", myCommand.outputRedirected);
     //closes the opened file
     close(outputRedirect); 
   }
-
+*/
   //runs the last (or potentially first and only) program
-  //executeCommand(inputFd, 1, myCommand.cmds[i], 0);
-
-  execvp(myCommand.cmds[0][0], myCommand.cmds[0]);
-
+  executeCommand(stdin, stdout, myCommand.cmds[0], 0);
 }
 
 //helper funciton responsible for executing non-builting commands
@@ -91,30 +92,34 @@ void executeCommand(int inputFd, int outputFd, char *args[], int run_bg)
   else if(pid == 0)
   {
     //redirects our input strem to the correct file descriptor
-    if(inputFd != 0)
+    if(inputFd != fileno(stdin))
     {
       //copying over the redirected input fd
-      dup2(inputFd, 0); 
+      dup2(inputFd, fileno(stdin)); 
 
       //need do close fd so we dont run out
       close(inputFd);
+
+      puts("We are in the inputFD Redirection child\n");
     } 
 
     //redirects our output stream to the correct file descriptor
-    if(outputFd != 1)
+    if(outputFd != fileno(stdout))
     {
       //copying over our redirected fd
-      dup2(outputFd, 1);
+      dup2(outputFd, fileno(stdout));
 
       //closing the old fd
       close(outputFd);
+
+      puts("We are in the outputFD Redirection child\n");
     }
 
     //run command
     execvp(args[0], args);
 
-
-    printf("Issue exec'ing program: %s\n", args[0]);
+    //error message for programs not found
+    printf("-nsh: %s: command not found\n", args[0]);
     exit(-1);
   }
   else
