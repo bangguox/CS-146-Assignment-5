@@ -62,19 +62,23 @@ background:  RUN_BACKGROUND
 
 command: command INPUT
        {
-          //sets the arg for the command
-          strcpy(myCommand.commandArgs[myCommand.commandCount - 1][myCommand.argCount[myCommand.commandCount - 1]], $2);
+          //sets the arguments
+          myCommand.cmds[myCommand.commandCount - 1][myCommand.paramCount[myCommand.commandCount - 1]] = $2;
 
-          //increments the counter
-          myCommand.argCount[myCommand.commandCount - 1]++;
+          //increments the parameter count of the array
+          myCommand.paramCount[myCommand.commandCount - 1]++;
        }
        | INPUT
        {
-          //set the command
-          strcpy(myCommand.command[myCommand.commandCount],$1);
 
           //increment command count
           myCommand.commandCount++;
+
+          //sets the commands
+          myCommand.cmds[myCommand.commandCount - 1][myCommand.paramCount[myCommand.commandCount - 1]] = $1;
+      
+          //increments the parameter count of the array
+          myCommand.paramCount[myCommand.commandCount - 1]++;
        }
        ;
 
@@ -177,7 +181,7 @@ void Parse()
   int i;
   for(i = 0; i < 16; i++)
   {
-    myCommand.argCount[i] = 0;
+    myCommand.paramCount[i] = 0;
   }
 
   //call out lex + bison
@@ -199,25 +203,22 @@ void printParse()
     printf("< '%s' ", myCommand.inputSpecifier);
   }
 
-
   //handles all of the commands and their arguments
   int i;
   for(i = 0; i < myCommand.commandCount; i++)
   {
-      printf("'%s'", myCommand.command[i]);
-
     //printing all of the args to the command
     int j;
-    for(j = 0; j < myCommand.argCount[i]; j++)
+    for(j = 0; j < myCommand.paramCount[i]; j++)
     {
-      printf(" '%s'", myCommand.commandArgs[i][j]);
+      printf(" '%s'", myCommand.cmds[i][j]);
     }
 
     //printing the pipe if there is a following command
     if(i != myCommand.commandCount - 1)
       printf(" | ");
     else
-    printf(" ");
+      printf(" ");
   }
 
   //handles any output redirection

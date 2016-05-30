@@ -22,9 +22,6 @@ typedef struct commandStruct{
   //stores the number of commands that exist  
   int commandCount;
 
-  //potentially 16 commands
-  int argCount[16];  
-
   //flag to signal input redirection
   int inputRedirected;
 
@@ -40,13 +37,12 @@ typedef struct commandStruct{
   //stores the output redirect file
   char outputSpecifier[100000];
 
-  //storing the command  
-  //char command[MAX_COMMANDS][MAX_FILE_NAME_SIZE];
-  char command[16][10000];
-  
-  //storing the command args  
-  //char command[MAX_COMMANDS][MAX_ARGS][MAX_FILE_NAME_SIZE];
-  char commandArgs[16][10000][10000];
+  //stores the number of paramets for a single command
+  int paramCount[16];
+
+  //stores the parameters of the command
+  char *cmds[16][10000];
+
 } commandStruct;
 
 extern commandStruct myCommand;
