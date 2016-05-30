@@ -1,5 +1,5 @@
 all: parse.tab.c lex.yy.c 
-	gcc -w parse.tab.c lex.yy.c parse.c -o parser
+	gcc -w parse.tab.c lex.yy.c parse.c -o nsh
 
 lex.yy.c: parse.l
 	flex parse.l; 
@@ -8,7 +8,7 @@ parse.tab.c: parse.y
 	bison -d parse.y; 
 
 run: all
-	./parser
+	./nsh
 
 clean:
-	rm -f parser parse.tab.h parse.tab.c lex.yy.c
+	rm -f nsh parse.tab.h parse.tab.c lex.yy.c

@@ -20,6 +20,7 @@ void prepAndExecuteCommand()
 
   //initial fd will be from whatever std in is for now...
   int inputFd = 0;
+  
 
 
   //pipe loop runs n-1 times... Last (or potentially only) execution will
@@ -42,16 +43,20 @@ void prepAndExecuteCommand()
 
     //redirect the read end of the pipe to our inputFd in preparation
     //of the next command to read from
-    dup2(fd[0], inputFd);
-    close(fd[0]);
+   // dup2(fd[0], inputFd);
+   // close(fd[0]);
+   inputFd = fd[0];
   }
 
   if(inputFd != 0)
     dup2(inputFd, 0);
+
     args = prepareCommand(i);  
   
   //runs the last (or potentially first and only) program
   executeCommand(inputFd, 1, args, 0);
+  //  execvp(args[0], args);
+
 }
 
 //helper funciton responsible for executing non-builting commands

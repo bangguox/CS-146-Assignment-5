@@ -4,10 +4,12 @@
   //declaring my global struct. Kind of hacky, but the 
   //  alternatives suck
   commandStruct myCommand;
+  
+  extern FILE * yyin;
 
   extern int yylineno;
   void yyerror(char *ps, ...){
-    printf("%s\n", ps);
+    printf("In yylineno: %s\n", ps);
 }
 %}
 
@@ -20,14 +22,25 @@
 %start cmd_line
 
 /*all tokens declared in my FLEX*/
-%token <string> EXIT PIPE INPUT_REDIRECTION OUTPUT_REDIRECTION INPUT RUN_BACKGROUND APPEND
+%token <string> EXIT END_OF_FILE PIPE INPUT_REDIRECTION OUTPUT_REDIRECTION INPUT RUN_BACKGROUND APPEND
 
 
 %%
 cmd_line:
         | EXIT 
         {
-          printf("\nThe ECIT command has been detected! (No handling specified by Part 1 instuctions)\n"); 
+          printf("\nThe EXIT command has been detected! (No handling specified by Part 1 instuctions)\n"); 
+          myCommand.eof = 1;
+        }
+        | END_OF_FILE
+        {
+          printf("End of file token has been detected!\n");
+
+          //sets the eof bit to true
+          myCommand.eof = 1;
+
+          //return 0 to stop the bison from looking for more tokens  
+          return 0;
         }
         | cmd_func background
         ;
@@ -111,37 +124,36 @@ append:APPEND INPUT
 
 int main(int argc, char *argv[])
 {
-  signal();
 
   //checking our cmd line params 
-  assert(argc == 1);
+  assert(argc <= 2);
 
-  FILE *fp = stdin;
-
-  //can take in a BUF_SIZE line from file/stdin
-  const int BUF_SIZE = 1000000;
-  char buf[BUF_SIZE];
-
-  while(!feof(fp))
+  //handles input scripts, otherwise points the fp to stdin
+  if(argc == 2)
   {
+    yyin = fopen(argv[1],"r");
+  }
+  else
+  {
+    yyin = stdin;
+
     //cmd prompt
     printf("? ");
-
-    //call to parse function
-    Parse(); 
-   
-    //prepares and executes command 
-    if(!feof(fp))
-    {
-       prepAndExecuteCommand();
-    }
-    else
-    {
-      printf("There is an EOF\n");
-    }
   }
 
-  fclose(fp);
+  while(!myCommand.eof)
+  {
+
+    //call to parse function
+    Parse();
+    if(!myCommand.eof) 
+      printParse();
+
+    if(argc < 2 && !myCommand.eof)
+      printf("? ");
+
+  }
+  
 
   return 0;
 }
@@ -172,6 +184,58 @@ void Parse()
    yyparse();
 }
 
+/*
+*prints the command stuct in accordance with assignment instructions
+*/
+void printParse()
+{
+  //outputs the number of commands
+  printf("%d: ", myCommand.commandCount);
+
+  //handles any input redirection
+  if(myCommand.inputRedirected)
+  {
+    //prints the symbol and the redirected file name
+    printf("< '%s' ", myCommand.inputSpecifier);
+  }
+
+
+  //handles all of the commands and their arguments
+  int i;
+  for(i = 0; i < myCommand.commandCount; i++)
+  {
+      printf("'%s'", myCommand.command[i]);
+
+    //printing all of the args to the command
+    int j;
+    for(j = 0; j < myCommand.argCount[i]; j++)
+    {
+      printf(" '%s'", myCommand.commandArgs[i][j]);
+    }
+
+    //printing the pipe if there is a following command
+    if(i != myCommand.commandCount - 1)
+      printf(" | ");
+    else
+    printf(" ");
+  }
+
+  //handles any output redirection
+  if(myCommand.outputRedirected)
+  {
+    //prints the symbol and the redirected file name
+    printf(" >'%s'", myCommand.outputSpecifier);
+  }
+  
+  if(myCommand.append)
+  {
+    //prints the symbol and the redirected file name
+    printf(" >>'%s'", myCommand.outputSpecifier);
+  }
+ 
+   //newline for formatting
+  printf("\n");
+}
 
 
 

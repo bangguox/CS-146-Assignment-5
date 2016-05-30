@@ -16,6 +16,9 @@ char ** prepareCommand(int cmd);
 //struct for storing cmd line info
 typedef struct commandStruct{
 
+  //stores if the end-of-file has been reahced
+  int eof;
+
   //stores the number of commands that exist  
   int commandCount;
 
