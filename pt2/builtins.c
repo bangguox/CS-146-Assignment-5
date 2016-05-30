@@ -16,6 +16,6 @@ void cd()
         strcat(cwd,path);
         chdir(cwd);
     }else{//true for dir w.r.t. /
-        chdir(pth);
+        chdir(path);
     }
 }
