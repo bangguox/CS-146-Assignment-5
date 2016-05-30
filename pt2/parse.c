@@ -49,13 +49,27 @@ void prepAndExecuteCommand()
   //appends a null to the end of the cmd array before execution
   myCommand.cmds[i][myCommand.paramCount[i]] = NULL;
 
-/*
-  if (file_fd != 1) 
+
+  //handling output redirection
+  if(myCommand.outputRedirected) 
   { 
-    dup2(file_fd, 1); 
-    close(file_fd); 
+    //opens the output file 
+    int outputRedirect = fopen(myCommand.outputFileName, "w"); 
+  
+    if(outputRedirect == NULL)
+    {
+      perror("prepAndExecute: Could not open outputRedirect file");
+      exit(1);
+    }
+printf("This is the value: %d\n", myCommand.outputRedirected);
+
+    //redirects the stdout
+    dup2(outputRedirect, 1); 
+
+    //closes the opened file
+    close(outputRedirect); 
   }
-*/
+
   //runs the last (or potentially first and only) program
   //executeCommand(inputFd, 1, myCommand.cmds[i], 0);
 
