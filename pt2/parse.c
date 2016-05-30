@@ -11,10 +11,7 @@ void prepAndExecuteCommand()
   const char *awk[] = { "awk", "{print $1}", 0 };
   const char *sort[] = { "sort", 0 };
   const char *uniq[] = { "uniq", 0 };
-
-  //char *args[] = { {ls}, {awk}, {sort}, {uniq} };
-  char *args[] = { {ls}, {grep} };
-  */
+*/
   int **args;
   int fd[2];
 

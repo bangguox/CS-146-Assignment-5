@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
     //call to parse function
     Parse();
     if(!myCommand.eof) 
-      printParse();
+      prepAndExecuteCommand();
 
     if(argc < 2 && !myCommand.eof)
       printf("? ");
