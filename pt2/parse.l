@@ -11,7 +11,7 @@
 %%
  
 exit                { return EXIT;}
-[0-9a-zA-Z_=#/\-\*\.]+ {  yylval.string = strdup(yytext); return INPUT; }
+[0-9a-zA-Z_=#:/\-\*\.]+ {  yylval.string = strdup(yytext); return INPUT; }
 [<]                   { return INPUT_REDIRECTION; }
 [>]                   { return OUTPUT_REDIRECTION;} 
 [>]{2}                { return APPEND;} 
