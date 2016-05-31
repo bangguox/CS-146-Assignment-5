@@ -91,7 +91,7 @@ redirection_parse: input_redirection output_redirection append
 output_redirection:OUTPUT_REDIRECTION INPUT
             { 
               //printf("\nCatching the OUTPUT_REDIR and this is the new file: %s",$2);
-              myCommand.outputRedirected = 1;
+              myCommand.outputRedirected = myCommand.append + 1;
             
               //storing new direction
               myCommand.outputFileName = $2;
@@ -117,10 +117,10 @@ input_redirection:INPUT_REDIRECTION INPUT
 append:APPEND INPUT
             { 
               //printf("\nCatching the OUTPUT_REDIR and this is the new file: %s",$2);
-              myCommand.append = 1;
+              myCommand.append = myCommand.outputRedirected + 1;
             
               //storing new direction
-              myCommand.outputFileName = $2;
+              myCommand.appendFileName = $2;
             }
             |
             {/*no  redirection found on the command... therefore ignore*/}

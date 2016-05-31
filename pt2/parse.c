@@ -85,6 +85,20 @@ void prepAndExecuteCommand()
     }
   }
 
+
+  //handling output redirection for ***appending***
+  if(myCommand.append) 
+  { 
+    //opens the output file 
+    dup2(open(myCommand.appendFileName, O_WRONLY | O_CREAT | O_APPEND, 0666), outputFd); 
+  
+    if(outputFd == NULL)
+    {
+      perror("prepAndExecute: Could not open outputRedirect file");
+      exit(1);
+    }
+  }
+
   //appends a null to the end of the cmd array before execution
   myCommand.cmds[0][myCommand.paramCount[0]] = NULL;
 

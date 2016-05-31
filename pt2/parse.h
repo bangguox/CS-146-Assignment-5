@@ -39,6 +39,9 @@ typedef struct commandStruct{
   //stores the output redirect file
   char* outputFileName;
 
+  //stores the append redirect file
+  char* appendFileName;
+
   //stores the number of paramets for a single command
   int paramCount[16];
 
