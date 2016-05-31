@@ -53,7 +53,7 @@ cmd_func: cmd_func PIPE cmd_instance
 
 background:  RUN_BACKGROUND
            {
-              myCommand.background = 1;
+            printf("\nThe BACKGROUND command has been detected! (No handling specified by Part 1 instuctions)\n"); 
            }
            |
            {/*END OF LINE (if no background symbol exists)*/}
@@ -62,23 +62,19 @@ background:  RUN_BACKGROUND
 
 command: command INPUT
        {
-          //sets the arguments
-          myCommand.cmds[myCommand.commandCount - 1][myCommand.paramCount[myCommand.commandCount - 1]] = $2;
+          //sets the arg for the command
+          strcpy(myCommand.commandArgs[myCommand.commandCount - 1][myCommand.argCount[myCommand.commandCount - 1]], $2);
 
-          //increments the parameter count of the array
-          myCommand.paramCount[myCommand.commandCount - 1]++;
+          //increments the counter
+          myCommand.argCount[myCommand.commandCount - 1]++;
        }
        | INPUT
        {
+          //set the command
+          strcpy(myCommand.command[myCommand.commandCount],$1);
 
           //increment command count
           myCommand.commandCount++;
-
-          //sets the commands
-          myCommand.cmds[myCommand.commandCount - 1][myCommand.paramCount[myCommand.commandCount - 1]] = $1;
-      
-          //increments the parameter count of the array
-          myCommand.paramCount[myCommand.commandCount - 1]++;
        }
        ;
 
@@ -91,11 +87,10 @@ redirection_parse: input_redirection output_redirection append
 output_redirection:OUTPUT_REDIRECTION INPUT
             { 
               //printf("\nCatching the OUTPUT_REDIR and this is the new file: %s",$2);
-              myCommand.outputRedirected = myCommand.append + 1;
+              myCommand.outputRedirected = 1;
             
               //storing new direction
-              myCommand.outputFileName = $2;
-
+              strcpy(myCommand.outputSpecifier, $2);
             }
             |
             {/*no  redirection found on the command... therefore ignore*/}
@@ -107,7 +102,7 @@ input_redirection:INPUT_REDIRECTION INPUT
               myCommand.inputRedirected = 1;
             
               //storing new direction
-              myCommand.inputFileName = $2;
+              strcpy(myCommand.inputSpecifier, $2);
             }
             |
             {/*no  redirection found on the command... therefore ignore*/}
@@ -117,10 +112,10 @@ input_redirection:INPUT_REDIRECTION INPUT
 append:APPEND INPUT
             { 
               //printf("\nCatching the OUTPUT_REDIR and this is the new file: %s",$2);
-              myCommand.append = myCommand.outputRedirected + 1;
+              myCommand.append = 1;
             
               //storing new direction
-              myCommand.appendFileName = $2;
+              strcpy(myCommand.outputSpecifier, $2);
             }
             |
             {/*no  redirection found on the command... therefore ignore*/}
@@ -151,19 +146,8 @@ int main(int argc, char *argv[])
 
     //call to parse function
     Parse();
-
-    //checking to see if the command is a cd request
-    if(!myCommand.eof && myCommand.commandCount > 0) 
-      //cheking for comment
-      if(myCommand.cmds[0][0][0] == '#')
-      {
-        //does nothing because we ignore comments
-      } 
-      //checking for cd built-in command
-      else if(!strcmp(myCommand.cmds[0][0], "cd"))
-        cd();
-      else
-        prepAndExecuteCommand();
+    if(!myCommand.eof) 
+      printParse();
 
     if(argc < 2 && !myCommand.eof)
       printf("? ");
@@ -182,19 +166,18 @@ void Parse()
   //resetting both redirections
   myCommand.inputRedirected = 0;
   myCommand.outputRedirected = 0;  
-  myCommand.append = 0;
 
   //ensuring all counter have been reset
   myCommand.commandCount = 0;
-
-  myCommand.background = 0;
+ 
+  myCommand.append = 0;
  
   //could probably save some timere here and only go through
   //  the previous count, but 16 is fairly small
   int i;
   for(i = 0; i < 16; i++)
   {
-    myCommand.paramCount[i] = 0;
+    myCommand.argCount[i] = 0;
   }
 
   //call out lex + bison
@@ -213,40 +196,48 @@ void printParse()
   if(myCommand.inputRedirected)
   {
     //prints the symbol and the redirected file name
-    printf("< '%s' ", myCommand.inputFileName);
+    printf("< '%s' ", myCommand.inputSpecifier);
   }
+
 
   //handles all of the commands and their arguments
   int i;
   for(i = 0; i < myCommand.commandCount; i++)
   {
+      printf("'%s'", myCommand.command[i]);
+
     //printing all of the args to the command
     int j;
-    for(j = 0; j < myCommand.paramCount[i]; j++)
+    for(j = 0; j < myCommand.argCount[i]; j++)
     {
-      printf(" '%s'", myCommand.cmds[i][j]);
+      printf(" '%s'", myCommand.commandArgs[i][j]);
     }
 
     //printing the pipe if there is a following command
     if(i != myCommand.commandCount - 1)
       printf(" | ");
     else
-      printf(" ");
+    printf(" ");
   }
 
   //handles any output redirection
   if(myCommand.outputRedirected)
   {
     //prints the symbol and the redirected file name
-    printf(" >'%s'", myCommand.outputFileName);
+    printf(" >'%s'", myCommand.outputSpecifier);
   }
   
   if(myCommand.append)
   {
     //prints the symbol and the redirected file name
-    printf(" >>'%s'", myCommand.outputFileName);
+    printf(" >>'%s'", myCommand.outputSpecifier);
   }
  
    //newline for formatting
   printf("\n");
 }
+
+
+
+
+

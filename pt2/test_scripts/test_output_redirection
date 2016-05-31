@@ -1,0 +1,7 @@
+echo testing output redirection -- note ls will produce an error proving output file non-existant before we start.
+rm -f output.txt
+ls -l output.txt
+echo hi > output.txt
+cat output.txt
+ls -l output.txt
+rm -f output.txt

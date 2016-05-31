@@ -1,0 +1,4 @@
+echo testing the functionality of running programs in the background -- system scheduling can affect this script
+ps | grep sleep
+sleep 30 &
+ps | grep sleep

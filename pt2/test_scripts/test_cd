@@ -1,0 +1,14 @@
+ehco testing the built-in cd command
+pwd 
+echo changing to root directory
+cd /
+pwd
+ls
+echo changing to the current user's home directory
+cd 
+pwd 
+ls
+echo changing to actual home
+cd .. 
+pwd
+ls

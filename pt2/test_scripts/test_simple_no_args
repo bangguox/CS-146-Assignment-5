@@ -1,0 +1,5 @@
+echo Testing a subset of arbitrary commands with NO options or arguments (Heading output is utizling echo)
+echo ls of current directory
+ls
+echo executing who
+who

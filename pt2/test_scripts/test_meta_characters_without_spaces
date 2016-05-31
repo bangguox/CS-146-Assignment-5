@@ -1,0 +1,4 @@
+echo testing the use of meta-characters without allowing spaces between them
+ls -l|grep parse>meta-test.txt
+cat<meta-test.txt
+rm -f meta-test.txt

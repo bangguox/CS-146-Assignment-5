@@ -5,22 +5,27 @@
 #include <errno.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 //prototypes 
 void Parse();
 void printParse();
 void prepAndExecuteCommand();
 void executeCommand();
-char ** prepareCommand(int cmd);
+void cd();
 
 //struct for storing cmd line info
 typedef struct commandStruct{
 
+  //stores if the end-of-file has been reahced
+  int eof;
+
   //stores the number of commands that exist  
   int commandCount;
 
-  //potentially 16 commands
-  int argCount[16];  
+  //sores if the program is to be run in the background or not
+  int background;
 
   //flag to signal input redirection
   int inputRedirected;
@@ -32,18 +37,20 @@ typedef struct commandStruct{
   int append;
 
   //stores to input redirect 
-  char inputSpecifier[10000];
+  char* inputFileName;
 
   //stores the output redirect file
-  char outputSpecifier[100000];
+  char* outputFileName;
 
-  //storing the command  
-  //char command[MAX_COMMANDS][MAX_FILE_NAME_SIZE];
-  char command[16][10000];
-  
-  //storing the command args  
-  //char command[MAX_COMMANDS][MAX_ARGS][MAX_FILE_NAME_SIZE];
-  char commandArgs[16][10000][10000];
+  //stores the append redirect file
+  char* appendFileName;
+
+  //stores the number of paramets for a single command
+  int paramCount[16];
+
+  //stores the parameters of the command
+  char *cmds[16][10000];
+
 } commandStruct;
 
 extern commandStruct myCommand;
