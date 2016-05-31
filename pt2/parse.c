@@ -54,7 +54,7 @@ void prepAndExecuteCommand()
     myCommand.cmds[i][myCommand.paramCount[i]] = NULL;
 
     //runs the progrma
-    executeCommand(inputFd, fd[1], myCommand.cmds[i], 0);
+    executeCommand(inputFd, fd[1], myCommand.cmds[i], myCommand.background);
 
     //closing the writing end of the pipe since all the info is already in there
     close(fd[1]);
@@ -98,7 +98,7 @@ void prepAndExecuteCommand()
   myCommand.cmds[i][myCommand.paramCount[i]] = NULL;
 
   //runs the last (or potentially first and only) program
-  executeCommand(inputFd, outputFd, myCommand.cmds[i], 0);
+  executeCommand(inputFd, outputFd, myCommand.cmds[i], myCommand.background);
     
     close(inputFd);
     close(outputFd);
