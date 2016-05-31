@@ -1,0 +1,3 @@
+testing the use of a single pipe in a command
+ls -l
+ls | wc
