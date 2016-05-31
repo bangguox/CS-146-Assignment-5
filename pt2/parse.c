@@ -61,8 +61,6 @@ void prepAndExecuteCommand()
 
     //redirect the read end of the pipe to our inputFd in preparation
     //of the next command to read from
-    // dup2(fd[0], inputFd);
-    // close(fd[0]);
     dup2(fd[0], inputFd);
     close(fd[0]);
   }
