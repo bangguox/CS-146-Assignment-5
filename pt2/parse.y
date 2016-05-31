@@ -53,7 +53,7 @@ cmd_func: cmd_func PIPE cmd_instance
 
 background:  RUN_BACKGROUND
            {
-            printf("\nThe BACKGROUND command has been detected! (No handling specified by Part 1 instuctions)\n"); 
+              myCommand.background = 1;
            }
            |
            {/*END OF LINE (if no background symbol exists)*/}
@@ -182,11 +182,12 @@ void Parse()
   //resetting both redirections
   myCommand.inputRedirected = 0;
   myCommand.outputRedirected = 0;  
+  myCommand.append = 0;
 
   //ensuring all counter have been reset
   myCommand.commandCount = 0;
- 
-  myCommand.append = 0;
+
+  myCommand.background = 0;
  
   //could probably save some timere here and only go through
   //  the previous count, but 16 is fairly small

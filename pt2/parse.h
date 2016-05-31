@@ -24,6 +24,9 @@ typedef struct commandStruct{
   //stores the number of commands that exist  
   int commandCount;
 
+  //sores if the program is to be run in the background or not
+  int background;
+
   //flag to signal input redirection
   int inputRedirected;
 
