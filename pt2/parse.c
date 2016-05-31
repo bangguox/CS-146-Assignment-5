@@ -37,7 +37,7 @@ void prepAndExecuteCommand()
     }
   }
 
-/*
+
   //standard input points to the inputFD
   //dup2(inputFd, fileno(stdin));
 
@@ -63,14 +63,9 @@ void prepAndExecuteCommand()
     //of the next command to read from
     // dup2(fd[0], inputFd);
     // close(fd[0]);
-    inputFd = fd[0];
+    dup2(fd[0], inputFd);
+    close(fd[0]);
   }
-
-//  if(inputFd != 0)
-//    dup2(inputFd, 0);
-
-
-*/
 
   //handling output redirection
   if(myCommand.outputRedirected) 
@@ -100,10 +95,10 @@ void prepAndExecuteCommand()
   }
 
   //appends a null to the end of the cmd array before execution
-  myCommand.cmds[0][myCommand.paramCount[0]] = NULL;
+  myCommand.cmds[i][myCommand.paramCount[i]] = NULL;
 
   //runs the last (or potentially first and only) program
-  executeCommand(inputFd, outputFd, myCommand.cmds[0], 0);
+  executeCommand(inputFd, outputFd, myCommand.cmds[i], 0);
     
     close(inputFd);
     close(outputFd);
