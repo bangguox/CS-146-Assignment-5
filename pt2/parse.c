@@ -61,8 +61,8 @@ void prepAndExecuteCommand()
   if(myCommand.outputRedirected) 
   { 
     //opens the output file 
-    dup2(open(myCommand.outputFileName, "w"), outputFd); 
-     
+    dup2(open(myCommand.outputFileName, O_WRONLY | O_CREAT | O_TRUNC, 0666), outputFd); 
+  
     if(outputFd == NULL)
     {
       perror("prepAndExecute: Could not open outputRedirect file");
@@ -111,7 +111,6 @@ void executeCommand(int inputFd, int outputFd, char *args[], int run_bg)
       //need do close fd so we dont run out
       close(inputFd);
 
-      puts("We are in the inputFD Redirection child\n");
     } 
 
     //redirects our output stream to the correct file descriptor
@@ -123,7 +122,6 @@ void executeCommand(int inputFd, int outputFd, char *args[], int run_bg)
       //closing the old fd
       close(outputFd);
 
-      puts("We are in the outputFD Redirection child\n");
     }
 
     //run command
