@@ -17,7 +17,11 @@ void prepAndExecuteCommand()
   //initial fd will be from whatever std in is for now...
   int saveInput = dup(fileno(stdin));
   int saveOutput = dup(fileno(stdout));
-  int inputFd;
+  int saveError = dup(fileno(stderr));
+
+  int inputFd = dup(fileno(stdin));
+  int outputFd = dup(fileno(stdout));
+  int errorFd = dup(fileno(stderr));
 /*
   //standard input points to the inputFD
   //dup2(inputFd, fileno(stdin));
@@ -50,32 +54,39 @@ void prepAndExecuteCommand()
 //  if(inputFd != 0)
 //    dup2(inputFd, 0);
 
-  //appends a null to the end of the cmd array before execution
-  myCommand.cmds[i][myCommand.paramCount[i]] = NULL;
 
+*/
 
   //handling output redirection
   if(myCommand.outputRedirected) 
   { 
     //opens the output file 
-    int outputRedirect = fopen(myCommand.outputFileName, "w"); 
-  
-    if(outputRedirect == NULL)
+    dup2(open(myCommand.outputFileName, "w"), outputFd); 
+     
+    if(outputFd == NULL)
     {
       perror("prepAndExecute: Could not open outputRedirect file");
       exit(1);
     }
-printf("This is the value: %d\n", myCommand.outputRedirected);
-
-    //redirects the stdout
-    dup2(outputRedirect, 1); 
-
-    //closes the opened file
-    close(outputRedirect); 
   }
-*/
+
+  //appends a null to the end of the cmd array before execution
+  myCommand.cmds[0][myCommand.paramCount[0]] = NULL;
+
   //runs the last (or potentially first and only) program
-  executeCommand(fileno(stdin), fileno(stdout), myCommand.cmds[0], 0);
+  executeCommand(inputFd, outputFd, myCommand.cmds[0], 0);
+    
+    close(inputFd);
+    close(outputFd);
+    close(errorFd);
+
+    dup2(saveInput, fileno(stdin));
+    dup2(saveOutput, fileno(stdout));
+    dup2(saveError, fileno(stderr));
+
+    close(saveInput);
+    close(saveOutput);
+    close(saveError);
 }
 
 //helper funciton responsible for executing non-builting commands
