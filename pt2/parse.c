@@ -22,6 +22,21 @@ void prepAndExecuteCommand()
   int inputFd = dup(fileno(stdin));
   int outputFd = dup(fileno(stdout));
   int errorFd = dup(fileno(stderr));
+
+
+  //input redirection
+  if(myCommand.inputRedirected) 
+  { 
+    //opens the output file 
+    dup2(open(myCommand.inputFileName, O_RDONLY), inputFd); 
+  
+    if(inputFd == NULL)
+    {
+      printf("-nsh: %s: No such file or directoy\n");
+      exit(1);
+    }
+  }
+
 /*
   //standard input points to the inputFD
   //dup2(inputFd, fileno(stdin));
