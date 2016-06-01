@@ -1,3 +1,2 @@
 echo testing arbitrary commands with arguments (and options) passed - V3
-echo car of file parse.h
 cat parse.h

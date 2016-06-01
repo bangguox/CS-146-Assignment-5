@@ -1,11 +1,6 @@
 echo testing arbitrary commands with arguments (and options) passed - V1
-echo ls of current directory
 ls
-echo ls of file parse.h
 ls parse.h
-echo ls with option -l of current directory
 ls -l
-echo ls with option -l of file: parse.h
 ls -l parse.h
-echo ls with option -l of file: parse.h and parse.c
 ls -l parse.h parse.c

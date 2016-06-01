@@ -1,0 +1,3 @@
+echo testing the use of multiple pipes
+ls
+ls | grep parse | wc 
