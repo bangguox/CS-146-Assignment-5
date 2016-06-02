@@ -1,4 +1,4 @@
+echo Testing the use of the Exit command
 ls
-ls -l parse.h
 exit
 cat parse.h

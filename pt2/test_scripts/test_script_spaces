@@ -1,14 +1,9 @@
 echo testing the allowance of spaces (empty lines) in scripts. 
-echo printing the current directory
 ls
-echo creating a file: test_file
+
 touch test_file
 
-echo printing the new current directory
 ls
 
-echo removing the file: test_file
 rm -f test_file
 
-echo printing the original current directory
-ls

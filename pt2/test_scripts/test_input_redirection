@@ -1,3 +1,2 @@
 echo testing the input redirection -- using parse.h as the input file
 cat < parse.h
-wc < parse.h

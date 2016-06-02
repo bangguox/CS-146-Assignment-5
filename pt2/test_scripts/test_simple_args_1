@@ -1,6 +1,8 @@
 echo testing arbitrary commands with arguments (and options) passed - V1
 ls
+echo 
 ls parse.h
+echo 
 ls -l
-ls -l parse.h
+echo 
 ls -l parse.h parse.c

@@ -1,6 +1,5 @@
-echo testing the use of comments in scripts 
 #!/bin/nsh
-echo telling the interpreter what shell to run
+echo testing the use of comments in scripts 
 #printing the PWD
 pwd
 #printing the files in the current directory

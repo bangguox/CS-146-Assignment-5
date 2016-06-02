@@ -1,10 +1,10 @@
 echo testing appending to an exiting file -- note ls will produce an error proving output file does not exist initialliy
 rm -f output.txt
 ls -l output.txt
-echo This is the initial creation of the file and the first line of text >> output.txt
+echo First input >> output.txt
 cat output.txt
 ls -l output.txt
-echo We have now appended this line to the output.txt file >> output.txt
+echo Second input >> output.txt
 cat output.txt
 ls -l output.txt
 rm -f output.txt
